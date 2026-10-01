@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isAuthorizedAdmin() {
+      return request.auth != null && 
+        (request.auth.token.email == 'kcabishiekkumar@gmail.com' || 
+         request.auth.token.email == 'bothanapriyabothana@gmail.com');
+    }
+
+    // User profiles & settings
+    match /users/{userId} {
+      allow read, write: if isAuthorizedAdmin();
+    }
+
+    // Files collection
+    match /files/{fileId} {
+      allow read, write: if isAuthorizedAdmin();
+    }
+
+    // Folders collection
+    match /folders/{folderId} {
+      allow read, write: if isAuthorizedAdmin();
+    }
+
+    // File Versions
+    match /fileVersions/{versionId} {
+      allow read, write: if isAuthorizedAdmin();
+    }
+
+    // Activity Audit Logs
+    match /activityLogs/{logId} {
+      allow read, write: if isAuthorizedAdmin();
+    }
+
+    // Sessions & Security Events
+    match /sessions/{sessionId} {
+      allow read, write: if isAuthorizedAdmin();
+    }
+
+    match /securityEvents/{eventId} {
+      allow read, write: if isAuthorizedAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow read, write: if isAuthorizedAdmin();
+    }
+
+    // Public / Shared Links
+    match /shareLinks/{shareId} {
+      // Anyone with valid share token can read if unexpired and active
+      allow read: if true;
+      allow write: if isAuthorizedAdmin();
+    }
+  }
+}
